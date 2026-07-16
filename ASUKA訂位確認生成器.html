@@ -317,7 +317,7 @@ function docCss() {
     .mini-head .t { font-size: 10.5pt; color: var(--green); letter-spacing: 2px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
     .mini-head .rule { flex: 1; border-top: 0.5px solid var(--line); }
     /* 首頁頁首(Logo + 公司資訊) */
-    .doc-head { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 4mm; border-bottom: 0.5px solid var(--line); }
+    .doc-head { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 4mm; border-bottom: 0.5px solid var(--line); }
     .doc-logo { width: 29mm; color: var(--green-dk); }
     .doc-logo svg { display: block; width: 100%; height: auto; }
     .doc-co { text-align: right; font-size: 8pt; color: var(--muted); line-height: 1.75; letter-spacing: .3px; }
@@ -430,23 +430,27 @@ function renderDocument(d) {
     ? `<div class="status-strip unpaid"><span class="st">Option · 待付款</span>${d.paymentDueDate ? `<span class="due">付款到期日<strong>${fmtDate(d.paymentDueDate)}</strong></span>` : ""}</div>`
     : `<div class="status-strip paid"><span class="st">Booking · 已付款</span><span class="due">感謝您的付款，本訂位已確認。</span></div>`;
 
+  // 已付款狀態:已收款項照一般項目呈現(保留「(已收)」字樣,不加負號)
   const amtRows = (d.priceItems || []).map(it => `
-    <tr${it.received ? ` class="received"` : ""}>
+    <tr${(it.received && unpaid) ? ` class="received"` : ""}>
       <td>${s(it.label, "—")}${it.received ? "（已收）" : ""}</td>
       <td class="c">${s(it.currency, "JPY")}</td>
       <td class="r money">${CUR_SYMBOL[it.currency] || ""}${fmtAmt(it.amount)}</td>
     </tr>`).join("");
 
-  // 有已收金額時,金額區顯示 總計/已收金額/應付餘款 三列;否則只列總計。
-  // 標籤用中文四字寬對齊,金額僅帶幣別符號;多幣別時於總計標籤註記幣別。
+  // 待付款且有已收金額時,顯示 總計/已收金額/應付餘款 三列;
+  // 已付款時只列總計(全部項目加總)。標籤用中文四字寬對齊,金額僅帶幣別符號;多幣別時於總計標籤註記幣別。
   const plainMoney = (cur, n) => `${CUR_SYMBOL[cur] || cur + " "}${fmtAmt(n)}`;
   const totalBlocks = `<div class="amt-totals">${curList.map(cur => {
     const t = totals[cur];
     const curTag = curList.length > 1 ? `（${cur}）` : "";
+    if (!unpaid) {
+      return `<div class="trow total"><span class="k">總　　計${curTag}</span><span class="v">${plainMoney(cur, t.charge + t.received)}</span></div>`;
+    }
     let rows = `<div class="trow total"><span class="k">總　　計${curTag}</span><span class="v">${plainMoney(cur, t.charge)}</span></div>`;
     if (t.received > 0) {
       rows += `<div class="trow"><span class="k">已收金額</span><span class="v">${plainMoney(cur, t.received)}</span></div>`;
-      if (unpaid && t.balance > 0) rows += `<div class="trow balance"><span class="k">應付餘款</span><span class="v">${plainMoney(cur, t.balance)}</span></div>`;
+      if (t.balance > 0) rows += `<div class="trow balance"><span class="k">應付餘款</span><span class="v">${plainMoney(cur, t.balance)}</span></div>`;
     }
     return rows;
   }).join("")}</div>`;
@@ -472,9 +476,9 @@ function renderDocument(d) {
   let totalsPx = 8;
   for (const c of curList) {
     totalsPx += 30;
-    if (totals[c].received > 0) {
+    if (unpaid && totals[c].received > 0) {
       totalsPx += 28;
-      if (unpaid && totals[c].balance > 0) totalsPx += 30;
+      if (totals[c].balance > 0) totalsPx += 30;
     }
   }
   const estAmount = 53 + itemCount * 40 + totalsPx
