@@ -189,7 +189,6 @@ const DEFAULT_DATA = {
   // 付款方式(未付款時)
   showJpyBank: true,
   showTwdBank: false,
-  includeCcJpy: false,
   includeCcNtd: false,
   bankJpy: {
     title: "日幣匯款帳戶 Bank Account (JPY)",
@@ -209,7 +208,6 @@ const DEFAULT_DATA = {
     accountNo: "2002-01-0012289-8",
     reference: "",
   },
-  ccAuthNoteJpy: "",
   ccAuthNoteNtd: "",
   // 取消規定(中英對照表)
   penaltySchedule: [
@@ -609,7 +607,6 @@ function renderDocument(d) {
       <div style="font-size:10.5pt;color:var(--muted);line-height:1.8;margin:4mm 0;">請於付款到期日（${fmtDate(d.paymentDueDate)}）前完成費用繳付，以避免跨國作業突發狀況造成付款失敗。填寫完成後，請將本刷卡單回傳予您的旅遊顧問。</div>
     `);
   };
-  if (unpaid && d.includeCcJpy) pages.push(ccPage("JPY", d.ccAuthNoteJpy));
   if (unpaid && d.includeCcNtd) pages.push(ccPage("NTD", d.ccAuthNoteNtd));
 
   /* ── 取消規定頁(第一版彩條卡片版面)── */
@@ -784,7 +781,6 @@ function renderForm() {
     <div class="body">
       ${check("顯示日幣匯款帳戶", "showJpyBank")}
       ${check("顯示台幣匯款帳戶", "showTwdBank")}
-      ${check("附上刷卡授權單(日幣)", "includeCcJpy")}
       ${check("附上刷卡授權單(台幣)", "includeCcNtd")}
       <div class="hint">已付款狀態下,以上頁面一律不會輸出。</div>
       <hr style="border:none;border-top:1px solid var(--line);margin:10px 0;">
@@ -796,7 +792,6 @@ function renderForm() {
         <summary style="font-size:13px;">台幣帳戶內容</summary>
         <div class="body">${bankFields("bankTwd")}</div>
       </details>
-      ${fld("刷卡授權單金額文字(日幣,留空自動帶餘額)", "ccAuthNoteJpy", { type: "textarea", rows: 2 })}
       ${fld("刷卡授權單金額文字(台幣,留空自動帶餘額)", "ccAuthNoteNtd", { type: "textarea", rows: 2 })}
     </div>
   </details>
