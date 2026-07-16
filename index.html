@@ -220,7 +220,8 @@ const DEFAULT_DATA = {
   penaltyNoticeEn: "Due to the extremely strict payment terms, cancellation or changes, refunds, and other regulations when booking international cruise ships, this reservation is not subject to the provisions of the Taiwan Tourism Bureau's announced travel contract regarding passengers' voluntary termination of the contract before departure.",
   penaltyNoticeZh: "由於國際郵輪訂位之付款條件相對嚴格，包含取消、變更、退款及其他相關規範，皆依上列規定辦理。本訂單不適用台灣觀光署公告之旅遊定型化契約之相關規定。",
   // 公司資訊
-  companyName: "艾旅 LIVEWELL",
+  companyName: "艾旅國際旅行社",
+  companyNameEn: "LIVEWELL GROUP LTD.",
   companyAddress: "106485 台北市大安區敦化南路二段 76 號 2 樓之 2",
   companyPhone: "02-2704 3636",
   companyWebsite: "livewellgroup.com.tw",
@@ -239,6 +240,11 @@ function normalizeData(d) {
   // 文件會自動在航程名稱前加船名;若舊資料的航程名稱已手動含船名,去除重複
   if (d.shipName && d.routeName && d.routeName.startsWith(d.shipName)) {
     d.routeName = d.routeName.slice(d.shipName.length).replace(/^[\s・‧·．.、–-]+/, "");
+  }
+  // 舊版單行公司名稱預設值 → 換成新的中英兩行預設
+  if (d.companyName === "艾旅 LIVEWELL") {
+    d.companyName = "艾旅國際旅行社";
+    d.companyNameEn = d.companyNameEn || "LIVEWELL GROUP LTD.";
   }
   return d;
 }
@@ -482,7 +488,8 @@ function renderDocument(d) {
     <div class="doc-head">
       <div class="doc-logo">${LOGO_SVG}</div>
       <div class="doc-co">
-        <div class="nm">${s(d.companyName, "艾旅 LIVEWELL")}</div>
+        <div class="nm">${s(d.companyName, "艾旅國際旅行社")}</div>
+        ${d.companyNameEn ? `<div class="nm">${esc(d.companyNameEn)}</div>` : ""}
         ${s(d.companyAddress)}<br>Tel ${s(d.companyPhone)} · ${s(d.companyWebsite)}
       </div>
     </div>
@@ -820,7 +827,10 @@ function renderForm() {
   <details class="sec" data-sec="company" ${secOpen("company", false) ? "open" : ""}>
     <summary>公司資訊</summary>
     <div class="body">
-      ${fld("公司名稱", "companyName")}
+      <div class="row2">
+        ${fld("公司名稱(中文)", "companyName")}
+        ${fld("公司名稱(英文)", "companyNameEn")}
+      </div>
       ${fld("地址", "companyAddress")}
       <div class="row2">
         ${fld("電話", "companyPhone")}
