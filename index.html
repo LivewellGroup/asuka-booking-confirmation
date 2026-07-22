@@ -260,9 +260,8 @@ const esc = (t) => String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").
 const s = (v, fb = "") => (v === null || v === undefined || String(v).trim() === "") ? fb : esc(v);
 const nl2br = (t) => esc(t).replace(/\n/g, "<br>");
 const pad2 = (n) => String(n).padStart(2, "0");
-const CUR_SYMBOL = { JPY: "¥", NTD: "NT$" };
 const fmtAmt = (n) => Number(n || 0).toLocaleString("en-US", { maximumFractionDigits: 0 });
-const fmtMoney = (cur, n) => `${cur} ${CUR_SYMBOL[cur] || ""}${fmtAmt(n)}`;
+const fmtMoney = (cur, n) => `${cur} ${fmtAmt(n)}`;
 const fmtDate = (d) => {
   if (!d) return "—";
   const m = String(d).match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -375,8 +374,6 @@ function docCss() {
     .due-banner { background: var(--gold-bg); border-left: 2mm solid var(--gold); padding: 4mm 6mm; margin-bottom: 6mm; display: flex; justify-content: space-between; align-items: center; }
     .due-banner .k { font-size: 9pt; color: var(--gold); letter-spacing: 2.5px; font-weight: 700; text-transform: uppercase; }
     .due-banner .v { font-family: var(--serif-zh); font-size: 15pt; color: #8B3A2D; font-weight: 700; margin-top: 1.5mm; }
-    .due-banner .bal { text-align: right; }
-    .due-banner .bal .v { font-family: var(--font-serif); }
     .bank-block { margin-bottom: 7mm; }
     .bank-row { display: flex; border-bottom: 0.5px solid var(--line); }
     .bank-row:nth-child(even) { background: var(--cream); }
@@ -435,19 +432,18 @@ function renderDocument(d) {
     <tr${(it.received && unpaid) ? ` class="received"` : ""}>
       <td>${s(it.label, "—")}${it.received ? "（已收）" : ""}</td>
       <td class="c">${s(it.currency, "JPY")}</td>
-      <td class="r money">${CUR_SYMBOL[it.currency] || ""}${fmtAmt(it.amount)}</td>
+      <td class="r money">${fmtAmt(it.amount)}</td>
     </tr>`).join("");
 
   // 待付款且有已收金額時,顯示 總計/已收金額/應付餘款 三列;
   // 已付款時只列總計(全部項目加總)。標籤用中文四字寬對齊,金額僅帶幣別符號;多幣別時於總計標籤註記幣別。
-  const plainMoney = (cur, n) => `${CUR_SYMBOL[cur] || cur + " "}${fmtAmt(n)}`;
+  const plainMoney = fmtMoney;
   const totalBlocks = `<div class="amt-totals">${curList.map(cur => {
     const t = totals[cur];
-    const curTag = curList.length > 1 ? `（${cur}）` : "";
     if (!unpaid) {
-      return `<div class="trow total"><span class="k">總　　計${curTag}</span><span class="v">${plainMoney(cur, t.charge + t.received)}</span></div>`;
+      return `<div class="trow total"><span class="k">總　　計</span><span class="v">${plainMoney(cur, t.charge + t.received)}</span></div>`;
     }
-    let rows = `<div class="trow total"><span class="k">總　　計${curTag}</span><span class="v">${plainMoney(cur, t.charge)}</span></div>`;
+    let rows = `<div class="trow total"><span class="k">總　　計</span><span class="v">${plainMoney(cur, t.charge)}</span></div>`;
     if (t.received > 0) {
       rows += `<div class="trow"><span class="k">已收金額</span><span class="v">${plainMoney(cur, t.received)}</span></div>`;
       if (t.balance > 0) rows += `<div class="trow balance"><span class="k">應付餘款</span><span class="v">${plainMoney(cur, t.balance)}</span></div>`;
@@ -542,9 +538,13 @@ function renderDocument(d) {
 
   /* ── 付款資訊頁(未付款時)── */
   if (unpaid && (d.showJpyBank || d.showTwdBank)) {
-    const bankBlock = (b) => `
+    // 各帳戶帶自己幣別的匯款金額(該幣別有應付餘額時顯示)
+    const bankBlock = (b, cur) => {
+      const bal = totals[cur] && totals[cur].balance > 0 ? totals[cur].balance : null;
+      return `
       <div class="bank-block">
         <div class="mini-head"><span class="t">${s(b.title, "匯款帳戶")}</span><span class="rule"></span></div>
+        ${bal !== null ? `<div class="bank-row"><span class="k">AMOUNT 匯款金額</span><span class="v" style="font-family:var(--font-serif);font-weight:700;color:#8B3A2D;">${fmtMoney(cur, bal)}</span></div>` : ""}
         <div class="bank-row"><span class="k">BANK 銀行名稱</span><span class="v">${s(b.bankName, "—")}</span></div>
         <div class="bank-row"><span class="k">BRANCH 分行名稱</span><span class="v">${s(b.branchName, "—")}</span></div>
         <div class="bank-row"><span class="k">ACCOUNT NAME 戶名</span><span class="v">${s(b.accountName, "—")}</span></div>
@@ -552,15 +552,14 @@ function renderDocument(d) {
         <div class="bank-row"><span class="k">ACCOUNT NUMBER 帳號</span><span class="v">${s(b.accountNo, "—")}</span></div>
         ${b.reference ? `<div class="bank-row"><span class="k">REFERENCE 備註</span><span class="v">${esc(b.reference)}</span></div>` : ""}
       </div>`;
-    const balances = curList.filter(c => totals[c].balance > 0);
+    };
     pages.push(innerPage(`
       ${sectionTitle("Payment Information", "付款資訊")}
       <div class="due-banner">
         <div><div class="k">Payment Due Date · 付款到期日</div><div class="v">${fmtDate(d.paymentDueDate)}</div></div>
-        ${balances.length ? `<div class="bal"><div class="k">Balance Due · 應付餘額</div><div class="v">${balances.map(c => fmtMoney(c, totals[c].balance)).join("　")}</div></div>` : ""}
       </div>
-      ${d.showJpyBank ? bankBlock(d.bankJpy) : ""}
-      ${d.showTwdBank ? bankBlock(d.bankTwd) : ""}
+      ${d.showJpyBank ? bankBlock(d.bankJpy, "JPY") : ""}
+      ${d.showTwdBank ? bankBlock(d.bankTwd, "NTD") : ""}
       <div class="gold-warning">
         <div class="warn-tri"></div>
         <div class="msg">匯款完成後，請將匯款憑證回傳予您的旅遊顧問，以利款項核對及訂位確認。</div>
