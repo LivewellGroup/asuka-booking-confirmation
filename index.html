@@ -191,6 +191,7 @@ const DEFAULT_DATA = {
   includeCcNtd: false,
   bankJpy: {
     title: "日幣匯款帳戶 Bank Account (JPY)",
+    amount: "",
     bankName: "THE SHANGHAI COMMERCIAL AND SAVINGS BANK Ltd. 上海商業儲蓄銀行",
     branchName: "HSIN YI BRANCH 信義分行",
     accountName: "LIVEWELL GROUP LTD.",
@@ -200,6 +201,7 @@ const DEFAULT_DATA = {
   },
   bankTwd: {
     title: "台幣匯款帳戶 Bank Account (NTD)",
+    amount: "",
     bankName: "台新國際商業銀行 (812) TAISHIN INTERNATIONAL BANK",
     branchName: "敦南分行 (0023) DUNNAN BRANCH",
     accountName: "艾旅國際旅行社股份有限公司",
@@ -540,7 +542,9 @@ function renderDocument(d) {
   if (unpaid && (d.showJpyBank || d.showTwdBank)) {
     // 各帳戶帶自己幣別的匯款金額(該幣別有應付餘額時顯示)
     const bankBlock = (b, cur) => {
-      const bal = totals[cur] && totals[cur].balance > 0 ? totals[cur].balance : null;
+      // 手動輸入的匯款金額優先;留空則自動帶入明細表該幣別的應付餘額
+      const manual = Number(String(b.amount ?? "").replace(/[,，\s]/g, "")) || 0;
+      const bal = manual > 0 ? manual : (totals[cur] && totals[cur].balance > 0 ? totals[cur].balance : null);
       return `
       <div class="bank-block">
         <div class="mini-head"><span class="t">${s(b.title, "匯款帳戶")}</span><span class="rule"></span></div>
@@ -682,6 +686,7 @@ function setPath(path, value) {
 function bankFields(prefix) {
   return `
     ${fld("卡片標題", prefix + ".title")}
+    ${fld("匯款金額(留空＝自動帶入明細該幣別餘額)", prefix + ".amount", { type: "text" })}
     ${fld("BANK 銀行名稱", prefix + ".bankName")}
     ${fld("BRANCH 分行名稱", prefix + ".branchName")}
     ${fld("ACCOUNT NAME 戶名", prefix + ".accountName")}
@@ -791,7 +796,7 @@ function renderForm() {
       ${check("顯示日幣匯款帳戶", "showJpyBank")}
       ${check("顯示台幣匯款帳戶", "showTwdBank")}
       ${check("附上刷卡授權單(台幣)", "includeCcNtd")}
-      <div class="hint">已付款狀態下,以上頁面一律不會輸出。</div>
+      <div class="hint">已付款狀態下,以上頁面一律不會輸出。<br>若要讓客人自選付款幣別,請在下方各帳戶內容分別填入日幣/台幣匯款金額(留空則自動帶入明細表該幣別餘額)。</div>
       <hr style="border:none;border-top:1px solid var(--line);margin:10px 0;">
       <details class="sec" data-sec="bankJpy" ${secOpen("bankJpy", false) ? "open" : ""}>
         <summary style="font-size:13px;">日幣帳戶內容</summary>
