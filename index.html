@@ -219,8 +219,18 @@ const DEFAULT_DATA = {
     { periodEn: "50 - 31 Days prior to departure", periodZh: "出發前 50〜31 天", feeEn: "75% of Full Fare", feeZh: "收取全額船費之 75%" },
     { periodEn: "30 - 0 Days prior to departure", periodZh: "出發前 30〜出發當日", feeEn: "100% of Full Fare", feeZh: "收取全額船費之 100%" },
   ],
-  penaltyNoticeEn: "Due to the strict payment and cancellation terms applicable to international cruise reservations, all cancellations, changes, refunds, and other related matters shall be handled in accordance with the terms and conditions stated above. This reservation is not subject to the provisions concerning a passenger’s voluntary termination of the contract prior to departure under the standard form travel contract announced by Taiwan’s tourism authority.\n\nOnce the cruise reservation has been confirmed, passenger names may not be changed. Any cancellation of the reservation or downgrade to a lower stateroom category will be treated as a cancellation and will be subject to the applicable cancellation terms and charges.",
-  penaltyNoticeZh: "由於國際郵輪訂位之付款及取消條件較為嚴格，包含取消、變更、退款及其他相關規範，均依上述條款辦理。本訂單不適用台灣觀光署公告之旅遊定型化契約相關規定。\n郵輪訂位確認後，旅客姓名上不得變更；如欲取消訂位或調降艙等，皆視同取消辦理，並依相關取消條款收取費用。",
+  penaltyNoticeEn: "Due to the strict payment and cancellation terms applicable to international cruise reservations, all cancellations, changes, refunds, and other related matters shall be handled in accordance with the terms and conditions stated above. This reservation is not subject to the provisions concerning a passenger’s voluntary termination of the contract prior to departure under the standard form travel contract announced by Taiwan’s tourism authority.\nOnce the cruise reservation has been confirmed, passenger names may not be changed. Any cancellation of the reservation or downgrade to a lower stateroom category will be treated as a cancellation and will be subject to the applicable cancellation terms and charges.",
+  penaltyNoticeZh: "由於國際郵輪訂位之付款及取消條件較為嚴格，包含取消、變更、退款及其他相關規範，均依上述條款辦理。本訂單不適用台灣觀光署公告之旅遊定型化契約相關規定。郵輪訂位確認後，旅客姓名上不得變更；如欲取消訂位或調降艙等，皆視同取消辦理，並依相關取消條款收取費用。",
+  // 日程表(出發前預選開放日;由出發日期自動往前推算)
+  includeSchedule: true,
+  scheduleItems: [
+    { label: "岸上觀光行程公告", sub: "Shore Excursions Announced", daysBefore: 45 },
+    { label: "岸上觀光預選開放（套房）", sub: "Shore Excursion Pre-Selection · Suites", daysBefore: 35 },
+    { label: "岸上觀光預選開放（陽台艙）", sub: "Shore Excursion Pre-Selection · Balcony Suites", daysBefore: 28 },
+    { label: "餐廳預選開放（套房）", sub: "Dining Pre-Selection · Suites", daysBefore: 10 },
+    { label: "餐廳預選開放（陽台艙）", sub: "Dining Pre-Selection · Balcony Suites", daysBefore: 5 },
+  ],
+  scheduleNote: "＊實際開放日期與辦理方式以郵輪公司公告為準。\n＊如需協助預約岸上觀光或餐廳，請聯繫您的旅遊顧問。",
   // 公司資訊
   companyName: "艾旅國際旅行社",
   companyNameEn: "LIVEWELL GROUP LTD.",
@@ -250,6 +260,10 @@ function normalizeData(d) {
   if (d.penaltyNoticeZh === "由於國際郵輪訂位之付款條件相對嚴格，包含取消、變更、退款及其他相關規範，皆依上列規定辦理。本訂單不適用台灣觀光署公告之旅遊定型化契約之相關規定。") {
     d.penaltyNoticeZh = DEFAULT_DATA.penaltyNoticeZh;
   }
+  // 重要提醒文字內容與預設相同、僅換行/空白不同 → 統一為預設排版
+  const flatTxt = (t) => String(t || "").replace(/\s+/g, "");
+  if (flatTxt(d.penaltyNoticeEn) === flatTxt(DEFAULT_DATA.penaltyNoticeEn)) d.penaltyNoticeEn = DEFAULT_DATA.penaltyNoticeEn;
+  if (flatTxt(d.penaltyNoticeZh) === flatTxt(DEFAULT_DATA.penaltyNoticeZh)) d.penaltyNoticeZh = DEFAULT_DATA.penaltyNoticeZh;
   // 舊版單行公司名稱預設值 → 換成新的中英兩行預設
   if (d.companyName === "艾旅 LIVEWELL") {
     d.companyName = "艾旅國際旅行社";
@@ -276,6 +290,20 @@ const fmtDate = (d) => {
   if (!d) return "—";
   const m = String(d).match(/^(\d{4})-(\d{2})-(\d{2})$/);
   return m ? `${m[1]} 年 ${Number(m[2])} 月 ${Number(m[3])} 日` : esc(d);
+};
+/** 日期(YYYY-MM-DD)往前推 n 天;格式不符回傳空字串 */
+const dateMinusDays = (d, n) => {
+  const m = String(d || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return "";
+  const dt = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]) - n));
+  return `${dt.getUTCFullYear()}-${pad2(dt.getUTCMonth() + 1)}-${pad2(dt.getUTCDate())}`;
+};
+/** 日期含星期,如「2026 年 5 月 12 日（二）」 */
+const fmtDateW = (d) => {
+  const m = String(d || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return "—";
+  const dt = new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3])));
+  return `${fmtDate(d)}（${["日", "一", "二", "三", "四", "五", "六"][dt.getUTCDay()]}）`;
 };
 
 /** 各幣別 應收/已收/餘額 */
@@ -404,10 +432,20 @@ function docCss() {
     .pen-rate { font-family: var(--font-serif); font-size: 13.5pt; font-weight: 700; line-height: 1.2; white-space: nowrap; }
     .pen-notice-en { font-family: var(--serif-en); font-style: italic; font-size: 9.5pt; color: var(--muted); line-height: 1.75; margin-bottom: 2.5mm; }
     .pen-notice-zh { font-size: 10.5pt; color: var(--ink); line-height: 1.9; }
+    /* 日程表(彩條卡片) */
+    .sch-card { display: flex; align-items: stretch; background: var(--paper); border: 0.5px solid var(--line); margin-bottom: 3mm; height: 24mm; overflow: hidden; }
+    .sch-stripe { width: 3.5mm; flex-shrink: 0; }
+    .sch-body { flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 0 6mm; gap: 4mm; }
+    .sch-label { font-size: 12pt; color: var(--green-dk); font-weight: 600; }
+    .sch-sub { font-family: var(--serif-en); font-style: italic; font-size: 9pt; color: var(--muted); margin-top: 1.2mm; }
+    .sch-right { text-align: right; flex-shrink: 0; }
+    .sch-date { font-family: var(--serif-zh); font-size: 13pt; font-weight: 700; white-space: nowrap; }
+    .sch-days { font-size: 9.5pt; color: var(--muted); margin-top: 1.2mm; }
+    .sch-note { font-size: 10.5pt; color: var(--ink); line-height: 1.9; margin-top: 6mm; }
   `;
 }
 
-function renderDocument(d) {
+function renderDocument(d, forceSplitAmount = false) {
   const totals = computeTotals(d.priceItems);
   const curList = Object.keys(totals);
   const unpaid = d.status !== "paid";
@@ -497,9 +535,10 @@ function renderDocument(d) {
   const estAmount = 53 + itemCount * 40 + totalsPx
     + (d.amountNote ? 11 + lines(d.amountNote) * 22 : 0)
     + (d.notes ? 70 + lines(d.notes) * 22 : 0)
-    + 145; // 代收轉付勾選區(固定輸出:mini-head + 3 行)
+    + 160; // 分隔線 + 代收轉付勾選區(固定輸出:mini-head + 3 行)
   const estBase = 553 + 53 + Math.ceil(guestCount / 2) * 40;
-  const splitAmount = estBase + estAmount > 995;
+  // 估算僅為第一手判斷;放不下時由文件內嵌腳本實測並自動切換備援獨立頁
+  const splitAmount = forceSplitAmount || estBase + estAmount > 975;
 
   pages.push(innerPage(`
     <div class="doc-head">
@@ -543,7 +582,7 @@ function renderDocument(d) {
       ${(d.guests || []).map((g, i) => `
         <div class="guest-row"><span class="no">${pad2(i + 1)}</span><span class="zh">${s(g.nameZh, "—")}</span><span class="en">${s(g.nameEn)}</span></div>`).join("") || `<div class="guest-row"><span class="zh" style="color:var(--muted);">尚未填寫</span></div>`}
     </div>
-    ${splitAmount ? "" : amountSection}
+    ${splitAmount ? "" : `<div id="amountFlow">${amountSection}</div>`}
   `));
 
   /* ── 費用明細獨立頁(第 1 頁放不下時)── */
@@ -552,6 +591,18 @@ function renderDocument(d) {
       ${sectionTitle("Amount / Invoice", "費用明細")}
       ${amountSection}
     `));
+  } else {
+    // 備援頁(預設隱藏):文件內嵌腳本實測第 1 頁金額區壓到頁尾時,改用此獨立頁並重編頁碼
+    pages.push(`
+    <section class="page amt-alt" style="display:none;">
+      <div class="ph"><span class="ph-left">LIVEWELL GROUP</span><span class="ph-right">BOOKING CONFIRMATION</span></div>
+      ${sectionTitle("Amount / Invoice", "費用明細")}
+      ${amountSection}
+      <div class="pf">
+        <span class="pf-left">Booking Confirmation · ${esc(guestMain)}</span>
+        <span class="pf-num">00</span>
+      </div>
+    </section>`);
   }
 
   /* ── 付款資訊頁(未付款時)── */
@@ -642,6 +693,36 @@ function renderDocument(d) {
   };
   if (unpaid && d.includeCcNtd) pages.push(ccPage("NTD", d.ccAuthNoteNtd));
 
+  /* ── 日程表頁(出發前預選開放日;由出發日期自動往前推算)── */
+  if (d.includeSchedule && (d.scheduleItems || []).length) {
+    const schColors = ["#3F5A3E", "#5C7A5A", "#7A9678", "#9C8654", "#C9B68E"];
+    pages.push(innerPage(`
+      ${sectionTitle("Pre-Cruise Schedule", "出發前重要日程")}
+      <div style="font-size:11pt;color:var(--muted);margin:-1mm 0 6mm;">岸上觀光與餐廳預選開放日程${d.departureDate ? `（以出發日 ${fmtDate(d.departureDate)} 為基準）` : ""}</div>
+      <div class="mini-head"><span class="t">PRE-SELECTION SCHEDULE · 預選開放日程</span><span class="rule"></span></div>
+      ${(d.scheduleItems || []).map((it, i) => {
+        const color = schColors[Math.min(i, schColors.length - 1)];
+        const days = Number(it.daysBefore) || 0;
+        const openDate = dateMinusDays(d.departureDate, days);
+        return `
+      <div class="sch-card">
+        <div class="sch-stripe" style="background: ${color};"></div>
+        <div class="sch-body">
+          <div>
+            <div class="sch-label">${s(it.label, "—")}</div>
+            ${it.sub ? `<div class="sch-sub">${esc(it.sub)}</div>` : ""}
+          </div>
+          <div class="sch-right">
+            <div class="sch-date" style="color: ${color};">${openDate ? fmtDateW(openDate) : "—"}</div>
+            <div class="sch-days">出發前 ${days} 天</div>
+          </div>
+        </div>
+      </div>`;
+      }).join("")}
+      ${d.scheduleNote ? `<div class="sch-note">${nl2br(d.scheduleNote)}</div>` : ""}
+    `));
+  }
+
   /* ── 取消規定頁(第一版彩條卡片版面)── */
   const penaltyColors = ["#5C7A5A", "#C9B68E", "#A0826D", "#B85042", "#8B3A2D"];
   pages.push(innerPage(`
@@ -675,7 +756,45 @@ function renderDocument(d) {
   return `<!DOCTYPE html>
 <html lang="zh-Hant">
 <head><meta charset="UTF-8"><title>訂位確認書 ${esc(d.routeName || "")}</title><style>${docCss()}</style></head>
-<body>${pages.join("\n")}</body>
+<body>${pages.join("\n")}
+<script>
+// 自動防破版:實測第 1 頁金額區是否壓到頁尾,壓到就改用備援獨立頁並重編頁碼。
+// 內嵌於文件本身,預覽 iframe、列印視窗、另存的 HTML 都適用;字型載入後與列印前會再各檢查一次。
+(function () {
+  function overflows() {
+    var flow = document.getElementById("amountFlow");
+    if (!flow || flow.style.display === "none") return false;
+    var page = flow.closest(".page");
+    var pf = page && page.querySelector(".pf");
+    if (!pf) return false;
+    return flow.getBoundingClientRect().bottom > pf.getBoundingClientRect().top - 2;
+  }
+  function renumber() {
+    var pages = document.querySelectorAll(".page");
+    var n = 0;
+    for (var i = 0; i < pages.length; i++) {
+      if (pages[i].style.display === "none") continue;
+      n++;
+      var num = pages[i].querySelector(".pf-num");
+      if (num) num.textContent = (n < 10 ? "0" + n : String(n));
+    }
+  }
+  function decide() {
+    var flow = document.getElementById("amountFlow");
+    var alt = document.querySelector(".amt-alt");
+    if (!flow || !alt || flow.style.display === "none") return;
+    if (overflows()) {
+      flow.style.display = "none";
+      alt.style.display = "";
+      renumber();
+    }
+  }
+  decide();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { setTimeout(decide, 0); });
+  window.addEventListener("beforeprint", decide);
+})();
+<\/script>
+</body>
 </html>`;
 }
 
@@ -852,6 +971,25 @@ function renderForm() {
     </div>
   </details>
 
+  <details class="sec" data-sec="schedule" ${secOpen("schedule", false) ? "open" : ""}>
+    <summary>日程表(出發前預選開放日)</summary>
+    <div class="body">
+      ${check("輸出日程表頁", "includeSchedule")}
+      <div class="hint">日期由「出發日期」自動往前推算,只需填天數;修改出發日期後日程會自動更新。</div>
+      ${(data.scheduleItems || []).map((it, i) => `
+        <div class="list-item">
+          <button type="button" class="del" data-del-sch="${i}" title="刪除">✕</button>
+          ${fld("項目(中文)", `scheduleItems.${i}.label`)}
+          <div class="row2">
+            ${fld("項目(英文,留空不顯示)", `scheduleItems.${i}.sub`)}
+            ${fld("出發前天數", `scheduleItems.${i}.daysBefore`, { type: "number" })}
+          </div>
+        </div>`).join("")}
+      <button type="button" class="add" id="addSch">＋ 新增日程項目</button>
+      ${fld("日程備註(留空不顯示)", "scheduleNote", { type: "textarea", rows: 3 })}
+    </div>
+  </details>
+
   <details class="sec" data-sec="company" ${secOpen("company", false) ? "open" : ""}>
     <summary>公司資訊</summary>
     <div class="body">
@@ -875,9 +1013,11 @@ function renderForm() {
   document.getElementById("addGuest").onclick = () => { data.guests.push({ nameZh: "", nameEn: "" }); refresh(true); };
   document.getElementById("addItem").onclick = () => { data.priceItems.push({ label: "", currency: "JPY", amount: 0, received: false }); refresh(true); };
   document.getElementById("addPen").onclick = () => { data.penaltySchedule.push({ periodEn: "", periodZh: "", feeEn: "", feeZh: "" }); refresh(true); };
+  document.getElementById("addSch").onclick = () => { data.scheduleItems.push({ label: "", sub: "", daysBefore: 0 }); refresh(true); };
   formPanel.querySelectorAll("[data-del-guest]").forEach(b => b.onclick = () => { data.guests.splice(Number(b.dataset.delGuest), 1); refresh(true); });
   formPanel.querySelectorAll("[data-del-item]").forEach(b => b.onclick = () => { data.priceItems.splice(Number(b.dataset.delItem), 1); refresh(true); });
   formPanel.querySelectorAll("[data-del-pen]").forEach(b => b.onclick = () => { data.penaltySchedule.splice(Number(b.dataset.delPen), 1); refresh(true); });
+  formPanel.querySelectorAll("[data-del-sch]").forEach(b => b.onclick = () => { data.scheduleItems.splice(Number(b.dataset.delSch), 1); refresh(true); });
 }
 
 // 輸入事件(委派)
@@ -902,14 +1042,15 @@ const previewFrame = document.getElementById("previewFrame");
 let previewTimer = null, storeTimer = null;
 
 function renderPreview() {
-  const html = renderDocument(data);
   const doc = previewFrame.contentDocument;
-  doc.open(); doc.write(html); doc.close();
-  // iframe 高度 = 文件頁數,更新後重算縮放
-  setTimeout(() => {
+  doc.open(); doc.write(renderDocument(data)); doc.close();
+  // iframe 高度 = 文件頁數;文件內嵌腳本可能在字型載入後多拆出一頁,故延後再各重算一次
+  const finish = () => {
     try { previewFrame.style.height = doc.body.scrollHeight + "px"; } catch (e) {}
     fitPreview();
-  }, 80);
+  };
+  setTimeout(finish, 80);
+  try { doc.fonts.ready.then(() => setTimeout(finish, 100)); } catch (e) {}
 }
 function schedulePreview() { clearTimeout(previewTimer); previewTimer = setTimeout(renderPreview, 600); }
 function scheduleStore() {
@@ -939,7 +1080,7 @@ document.getElementById("btnPdf").onclick = () => {
   const w = window.open("", "_blank");
   if (!w) { alert("請允許彈出視窗以下載 PDF"); return; }
   w.document.open(); w.document.write(renderDocument(data)); w.document.close();
-  // 等字型與版面載入後叫出列印(另存 PDF)
+  // 等字型與版面載入後叫出列印(另存 PDF);分頁由文件內嵌腳本實測處理,列印前亦會再檢查一次
   setTimeout(() => { try { w.focus(); w.print(); } catch (e) {} }, 900);
 };
 document.getElementById("btnSave").onclick = () => {
