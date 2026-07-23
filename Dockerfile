@@ -7,5 +7,6 @@ COPY index.html /usr/share/nginx/html/index.html
 
 EXPOSE 80
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD wget -qO- http://localhost/ >/dev/null 2>&1 || exit 1
+# 用 127.0.0.1 (IPv4) 而非 localhost,避免容器內走 IPv6 而 nginx 只監聽 IPv4
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -q -O /dev/null http://127.0.0.1:80/ || exit 1
