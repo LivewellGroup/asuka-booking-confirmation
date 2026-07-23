@@ -1,0 +1,15 @@
+# ASUKA 訂位確認生成器 — 本地 Docker 部署
+# 用法:
+#   docker compose up -d --build      啟動 / 更新
+#   docker compose down               停止
+#
+# 對外由 Cloudflare Tunnel 指向 http://localhost:8090
+# 若 8090 已被占用,改左邊的數字即可(例如 "8091:80"),並同步改 tunnel 設定。
+services:
+  asuka-invoice:
+    build: .
+    image: asuka-invoice:latest
+    container_name: asuka-invoice
+    restart: unless-stopped
+    ports:
+      - "8090:80"
