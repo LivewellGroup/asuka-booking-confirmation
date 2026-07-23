@@ -219,8 +219,8 @@ const DEFAULT_DATA = {
     { periodEn: "50 - 31 Days prior to departure", periodZh: "出發前 50〜31 天", feeEn: "75% of Full Fare", feeZh: "收取全額船費之 75%" },
     { periodEn: "30 - 0 Days prior to departure", periodZh: "出發前 30〜出發當日", feeEn: "100% of Full Fare", feeZh: "收取全額船費之 100%" },
   ],
-  penaltyNoticeEn: "Due to the extremely strict payment terms, cancellation or changes, refunds, and other regulations when booking international cruise ships, this reservation is not subject to the provisions of the Taiwan Tourism Bureau's announced travel contract regarding passengers' voluntary termination of the contract before departure.",
-  penaltyNoticeZh: "由於國際郵輪訂位之付款條件相對嚴格，包含取消、變更、退款及其他相關規範，皆依上列規定辦理。本訂單不適用台灣觀光署公告之旅遊定型化契約之相關規定。",
+  penaltyNoticeEn: "Due to the strict payment and cancellation terms applicable to international cruise reservations, all cancellations, changes, refunds, and other related matters shall be handled in accordance with the terms and conditions stated above. This reservation is not subject to the provisions concerning a passenger’s voluntary termination of the contract prior to departure under the standard form travel contract announced by Taiwan’s tourism authority.\n\nOnce the cruise reservation has been confirmed, passenger names may not be changed. Any cancellation of the reservation or downgrade to a lower stateroom category will be treated as a cancellation and will be subject to the applicable cancellation terms and charges.",
+  penaltyNoticeZh: "由於國際郵輪訂位之付款及取消條件較為嚴格，包含取消、變更、退款及其他相關規範，均依上述條款辦理。本訂單不適用台灣觀光署公告之旅遊定型化契約相關規定。\n郵輪訂位確認後，旅客姓名上不得變更；如欲取消訂位或調降艙等，皆視同取消辦理，並依相關取消條款收取費用。",
   // 公司資訊
   companyName: "艾旅國際旅行社",
   companyNameEn: "LIVEWELL GROUP LTD.",
@@ -242,6 +242,13 @@ function normalizeData(d) {
   // 文件會自動在航程名稱前加船名;若舊資料的航程名稱已手動含船名,去除重複
   if (d.shipName && d.routeName && d.routeName.startsWith(d.shipName)) {
     d.routeName = d.routeName.slice(d.shipName.length).replace(/^[\s・‧·．.、–-]+/, "");
+  }
+  // 舊版重要提醒預設文字 → 換成新版預設(僅在使用者未自行修改過時)
+  if (d.penaltyNoticeEn === "Due to the extremely strict payment terms, cancellation or changes, refunds, and other regulations when booking international cruise ships, this reservation is not subject to the provisions of the Taiwan Tourism Bureau's announced travel contract regarding passengers' voluntary termination of the contract before departure.") {
+    d.penaltyNoticeEn = DEFAULT_DATA.penaltyNoticeEn;
+  }
+  if (d.penaltyNoticeZh === "由於國際郵輪訂位之付款條件相對嚴格，包含取消、變更、退款及其他相關規範，皆依上列規定辦理。本訂單不適用台灣觀光署公告之旅遊定型化契約之相關規定。") {
+    d.penaltyNoticeZh = DEFAULT_DATA.penaltyNoticeZh;
   }
   // 舊版單行公司名稱預設值 → 換成新的中英兩行預設
   if (d.companyName === "艾旅 LIVEWELL") {
@@ -464,7 +471,14 @@ function renderDocument(d) {
     </table>
     ${totalBlocks}
     ${d.amountNote ? `<div class="amt-note">${nl2br(d.amountNote)}</div>` : ""}
-    ${d.notes ? `<hr class="divider"><div class="mini-head"><span class="t">REMARKS · 備註</span><span class="rule"></span></div><div style="font-size:10.5pt;line-height:1.8;">${nl2br(d.notes)}</div>` : ""}`;
+    ${d.notes ? `<hr class="divider"><div class="mini-head"><span class="t">REMARKS · 備註</span><span class="rule"></span></div><div style="font-size:10.5pt;line-height:1.8;">${nl2br(d.notes)}</div>` : ""}
+    <hr class="divider">
+    <div class="mini-head"><span class="t">RECEIPT · 代收轉付</span><span class="rule"></span></div>
+    <div style="font-size:10.5pt;line-height:2.2;">
+      是否需要開立代收轉付收據：<span style="font-size:12pt;">□</span> 否　<span style="font-size:12pt;">□</span> 是（勾選「是」請填寫以下資訊）<br>
+      抬頭：<span style="display:inline-block;width:56mm;border-bottom:1px solid #666;">&nbsp;</span>　統編：<span style="display:inline-block;width:32mm;border-bottom:1px solid #666;">&nbsp;</span><br>
+      收件地址：<span style="display:inline-block;width:108mm;border-bottom:1px solid #666;">&nbsp;</span>
+    </div>`;
 
   // 估算第 1 頁內容高度(px),超出 A4 可用範圍時金額區自動移到獨立頁。
   // 常數為實測值:頁首85+標題列98+狀態列90+航程區160+房型區120=553,
@@ -482,7 +496,8 @@ function renderDocument(d) {
   }
   const estAmount = 53 + itemCount * 40 + totalsPx
     + (d.amountNote ? 11 + lines(d.amountNote) * 22 : 0)
-    + (d.notes ? 70 + lines(d.notes) * 22 : 0);
+    + (d.notes ? 70 + lines(d.notes) * 22 : 0)
+    + 145; // 代收轉付勾選區(固定輸出:mini-head + 3 行)
   const estBase = 553 + 53 + Math.ceil(guestCount / 2) * 40;
   const splitAmount = estBase + estAmount > 995;
 
@@ -832,8 +847,8 @@ function renderForm() {
           </div>
         </div>`).join("")}
       <button type="button" class="add" id="addPen">＋ 新增取消費用階段</button>
-      ${fld("重要提醒(英文)", "penaltyNoticeEn", { type: "textarea", rows: 3 })}
-      ${fld("重要提醒(中文)", "penaltyNoticeZh", { type: "textarea", rows: 3 })}
+      ${fld("重要提醒(英文)", "penaltyNoticeEn", { type: "textarea", rows: 6 })}
+      ${fld("重要提醒(中文)", "penaltyNoticeZh", { type: "textarea", rows: 4 })}
     </div>
   </details>
 
