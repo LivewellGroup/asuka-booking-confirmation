@@ -397,16 +397,16 @@ function docCss() {
     .amt-table th { border-bottom: 1px solid var(--green-dk); color: var(--green); font-size: 8.5pt; letter-spacing: 2px; font-weight: 700; text-transform: uppercase; padding: 1.8mm 2.5mm; text-align: left; }
     .amt-table th.r, .amt-table td.r { text-align: right; }
     .amt-table th.c, .amt-table td.c { text-align: center; }
-    .amt-table td { font-size: 10.5pt; padding: 2.2mm 2.5mm; background: var(--paper); }
+    .amt-table td { font-size: 10.5pt; padding: 2.2mm 2.5mm; background: rgba(255,255,255,0.6); }
     .amt-table tbody tr:last-child td { border-bottom: 1px solid var(--green-dk); }
     .amt-table td.money { font-weight: 700; white-space: nowrap; }
     .amt-table tr.received td { color: var(--green-dk); }
     .amt-table tr.received td.money::before { content: "− "; }
-    .amt-totals { margin-left: auto; width: 74mm; margin-top: 2mm; }
-    .amt-totals .trow { display: flex; justify-content: space-between; align-items: baseline; padding: 1.6mm 4mm; }
+    .amt-totals { width: 100%; background: rgba(255,255,255,0.6); border-bottom: 0.5px solid var(--line); }
+    .amt-totals .trow { display: flex; justify-content: flex-end; align-items: baseline; gap: 8mm; padding: 1.8mm 2.5mm; }
     .amt-totals .trow .k { font-size: 10.5pt; color: var(--ink); }
     .amt-totals .trow .v { font-family: var(--font-serif); font-size: 12.5pt; color: var(--ink); font-weight: 600; }
-    .amt-totals .trow.total { background: var(--green-lt); padding: 2mm 4mm; }
+    .amt-totals .trow.total { padding: 2.2mm 2.5mm; }
     .amt-totals .trow.total .k { color: var(--green-dk); font-weight: 700; }
     .amt-totals .trow.total .v { color: var(--green-dk); font-weight: 700; }
     .amt-totals .trow.balance .k { color: #8B3A2D; font-weight: 700; }
@@ -439,8 +439,8 @@ function docCss() {
     .pen-zh { font-size: 9.5pt; color: var(--muted); margin-top: 1.2mm; white-space: nowrap; }
     .pen-right { text-align: right; flex-shrink: 0; }
     .pen-rate { font-family: var(--font-serif); font-size: 13.5pt; font-weight: 700; line-height: 1.2; white-space: nowrap; }
-    .pen-notice-en { font-family: var(--serif-en); font-style: italic; font-size: 9.5pt; color: var(--muted); line-height: 1.75; margin-bottom: 2.5mm; }
-    .pen-notice-zh { font-size: 10.5pt; color: var(--ink); line-height: 1.9; }
+    .pen-notice-zh { font-size: 10.5pt; color: var(--ink); line-height: 1.9; margin-bottom: 2.5mm; }
+    .pen-notice-en { font-family: var(--serif-en); font-style: italic; font-size: 8.5pt; color: var(--muted); line-height: 1.7; }
     /* 日程表(彩條卡片) */
     .sch-card { display: flex; align-items: stretch; background: var(--paper); border: 0.5px solid var(--line); margin-bottom: 3mm; height: 24mm; overflow: hidden; }
     .sch-stripe { width: 3.5mm; flex-shrink: 0; }
@@ -755,8 +755,8 @@ function renderDocument(d, forceSplitAmount = false) {
     ${(d.penaltyNoticeEn || d.penaltyNoticeZh) ? `
     <div style="margin-top:7mm;">
       <div class="mini-head"><span class="t">IMPORTANT NOTICES · 重要提醒</span><span class="rule"></span></div>
-      ${d.penaltyNoticeEn ? `<div class="pen-notice-en">${nl2br(d.penaltyNoticeEn)}</div>` : ""}
       ${d.penaltyNoticeZh ? `<div class="pen-notice-zh">${nl2br(d.penaltyNoticeZh)}</div>` : ""}
+      ${d.penaltyNoticeEn ? `<div class="pen-notice-en">${nl2br(d.penaltyNoticeEn)}</div>` : ""}
     </div>` : ""}
   `));
 
