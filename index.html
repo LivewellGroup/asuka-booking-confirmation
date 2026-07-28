@@ -381,33 +381,32 @@ function docCss() {
     .status-strip .due strong { font-family: var(--serif-zh); font-size: 12.5pt; color: #8B3A2D; font-weight: 700; margin-left: 2mm; }
     /* 航程區(左:航程名稱/右:日期三列) */
     .voy2 { display: flex; justify-content: space-between; align-items: center; gap: 8mm; margin-bottom: 3.5mm; }
-    .voy-route { font-family: var(--serif-zh); font-size: 14.5pt; color: var(--ink); font-weight: 600; line-height: 1.45; flex: 1; }
+    .voy-route { font-size: 14pt; color: var(--ink); font-weight: 700; line-height: 1.45; flex: 1; }
     .voy-meta { width: 64mm; flex-shrink: 0; }
     .voy-meta .vm { display: flex; justify-content: space-between; align-items: baseline; gap: 4mm; padding: 1.2mm 0; }
-    .voy-meta .vm + .vm { border-top: 0.5px solid var(--line); }
-    .voy-meta .vm .v { font-family: var(--font-serif); font-size: 11pt; color: var(--ink); font-weight: 600; white-space: nowrap; }
-    .voy-meta .vm .v .zh { font-family: var(--serif-zh); }
+    .voy-meta .vm .v { font-size: 11pt; color: var(--ink); font-weight: 700; white-space: nowrap; }
     /* 標籤+值直列(房型/訂位人) */
     .kv-list { margin-bottom: 4.5mm; }
-    .kv-row { display: flex; align-items: baseline; gap: 4mm; padding: 1.2mm 0; }
-    .kv-row .label { width: 56mm; flex-shrink: 0; }
-    .kv-row .v { font-family: var(--serif-zh); font-size: 11.5pt; color: var(--ink); font-weight: 600; white-space: nowrap; }
-    .kv-row .sub { font-size: 9.5pt; color: var(--muted); font-weight: 400; }
-    .kv-row .en { font-size: 9.5pt; color: var(--muted); letter-spacing: .5px; }
+    .kv-row { display: flex; align-items: baseline; gap: 2.5mm; padding: 1.2mm 0; }
+    .kv-row .label { width: 42mm; flex-shrink: 0; }
+    .kv-row .v { font-size: 11pt; color: var(--ink); font-weight: 700; white-space: nowrap; }
+    .kv-row .sub { font-size: 11pt; color: var(--ink); font-weight: 700; }
+    .kv-row .en { font-size: 10.5pt; color: var(--ink); font-weight: 700; letter-spacing: .5px; }
     /* 金額表 */
     .amt-table { width: 100%; border-collapse: collapse; }
-    .amt-table th { border-bottom: 1px solid var(--green-dk); color: var(--green); font-size: 8.5pt; letter-spacing: 2px; font-weight: 700; text-transform: uppercase; padding: 1.8mm 0; text-align: left; }
+    .amt-table th { border-bottom: 1px solid var(--green-dk); color: var(--green); font-size: 8.5pt; letter-spacing: 2px; font-weight: 700; text-transform: uppercase; padding: 1.8mm 2.5mm; text-align: left; }
     .amt-table th.r, .amt-table td.r { text-align: right; }
     .amt-table th.c, .amt-table td.c { text-align: center; }
-    .amt-table td { font-size: 10.5pt; padding: 2.2mm 0; }
-    .amt-table td.money { font-family: var(--font-serif); font-weight: 600; white-space: nowrap; }
+    .amt-table td { font-size: 10.5pt; padding: 2.2mm 2.5mm; background: var(--paper); }
+    .amt-table tbody tr:last-child td { border-bottom: 1px solid var(--green-dk); }
+    .amt-table td.money { font-weight: 700; white-space: nowrap; }
     .amt-table tr.received td { color: var(--green-dk); }
     .amt-table tr.received td.money::before { content: "− "; }
-    .amt-totals { margin-left: auto; width: 88mm; margin-top: 2mm; }
+    .amt-totals { margin-left: auto; width: 74mm; margin-top: 2mm; }
     .amt-totals .trow { display: flex; justify-content: space-between; align-items: baseline; padding: 1.6mm 4mm; }
     .amt-totals .trow .k { font-size: 10.5pt; color: var(--ink); }
     .amt-totals .trow .v { font-family: var(--font-serif); font-size: 12.5pt; color: var(--ink); font-weight: 600; }
-    .amt-totals .trow.total { border-top: 0.5px solid var(--green-dk); background: var(--green-lt); padding: 2mm 4mm; }
+    .amt-totals .trow.total { background: var(--green-lt); padding: 2mm 4mm; }
     .amt-totals .trow.total .k { color: var(--green-dk); font-weight: 700; }
     .amt-totals .trow.total .v { color: var(--green-dk); font-weight: 700; }
     .amt-totals .trow.balance .k { color: #8B3A2D; font-weight: 700; }
@@ -499,9 +498,9 @@ function renderDocument(d, forceSplitAmount = false) {
   const totalBlocks = `<div class="amt-totals">${curList.map(cur => {
     const t = totals[cur];
     if (!unpaid) {
-      return `<div class="trow total"><span class="k">總　　計</span><span class="v">${plainMoney(cur, t.charge + t.received)}</span></div>`;
+      return `<div class="trow total"><span class="k">總　計</span><span class="v">${plainMoney(cur, t.charge + t.received)}</span></div>`;
     }
-    let rows = `<div class="trow total"><span class="k">總　　計</span><span class="v">${plainMoney(cur, t.charge)}</span></div>`;
+    let rows = `<div class="trow total"><span class="k">總　計</span><span class="v">${plainMoney(cur, t.charge)}</span></div>`;
     if (t.received > 0) {
       rows += `<div class="trow"><span class="k">已收金額</span><span class="v">${plainMoney(cur, t.received)}</span></div>`;
       if (t.balance > 0) rows += `<div class="trow balance"><span class="k">應付餘款</span><span class="v">${plainMoney(cur, t.balance)}</span></div>`;
@@ -577,7 +576,7 @@ function renderDocument(d, forceSplitAmount = false) {
       <div class="voy-meta">
         ${vmRow("Departure 出發日期", fmtSlash(d.departureDate))}
         ${vmRow("Return 回程日期", fmtSlash(d.returnDate))}
-        ${vmRow("Duration 天數", `<span class="zh">${s(d.duration, "—")}</span>`)}
+        ${vmRow("Duration 天數", s(d.duration, "—"))}
       </div>
     </div>
 
