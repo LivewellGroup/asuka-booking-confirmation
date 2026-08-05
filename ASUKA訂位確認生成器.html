@@ -198,7 +198,8 @@ const DEFAULT_DATA = {
   // 公司資訊
   companyName: "艾旅國際旅行社",
   companyNameEn: "LIVEWELL GROUP LTD.",
-  companyAddress: "106485 台北市大安區敦化南路二段 76 號 2 樓之 2",
+  companyAddress: "106485 台北市大安區敦化南路一段 76 號 2 樓-2（潤泰金融大樓）",
+  companyLicense: "交觀甲 05652 號 | 品保會員北 2511 號",
   companyPhone: "02-2704 3636",
   companyWebsite: "livewellgroup.com.tw",
 };
@@ -229,6 +230,10 @@ function normalizeData(d) {
   if (flatTxt(d.penaltyNoticeEn) === flatTxt(DEFAULT_DATA.penaltyNoticeEn)) d.penaltyNoticeEn = DEFAULT_DATA.penaltyNoticeEn;
   if (flatTxt(d.penaltyNoticeZh) === flatTxt(DEFAULT_DATA.penaltyNoticeZh)) d.penaltyNoticeZh = DEFAULT_DATA.penaltyNoticeZh;
   // 舊版單行公司名稱預設值 → 換成新的中英兩行預設
+  // 舊版地址預設值 → 2026-08-05 更新的完整地址(僅在使用者未自行修改時遷移)
+  if (d.companyAddress === "106485 台北市大安區敦化南路二段 76 號 2 樓之 2") {
+    d.companyAddress = DEFAULT_DATA.companyAddress;
+  }
   if (d.companyName === "艾旅 LIVEWELL") {
     d.companyName = "艾旅國際旅行社";
     d.companyNameEn = d.companyNameEn || "LIVEWELL GROUP LTD.";
@@ -325,7 +330,7 @@ function docCss() {
     .mini-head .rule { flex: 1; border-top: 0.5px solid var(--line); }
     /* 首頁頁首(Logo + 公司資訊) */
     .doc-head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 4mm; border-bottom: 0.5px solid var(--line); }
-    .doc-logo { width: 54mm; }
+    .doc-logo { width: 66mm; }
     .doc-logo img { display: block; width: 100%; height: auto; }
     .doc-co { text-align: right; font-size: 8pt; color: var(--muted); line-height: 1.75; letter-spacing: .3px; }
     .doc-co .nm { font-family: var(--font-sans); font-size: 9.5pt; color: var(--green-dk); font-weight: 600; letter-spacing: 1.5px; }
@@ -519,7 +524,9 @@ function renderDocument(d, forceSplitAmount = false) {
       <div class="doc-logo"><img src="${LOGO_H_GREEN}" alt="Livewell Travel 艾旅"></div>
       <div class="doc-co">
         <div class="nm">${s(d.companyName, "艾旅國際旅行社")}</div>
-        ${s(d.companyAddress)}<br>Tel ${s(d.companyPhone)} · ${s(d.companyWebsite)}
+        ${s(d.companyAddress)}<br>
+        ${d.companyLicense ? `${esc(d.companyLicense)}<br>` : ""}
+        Tel: ${s(d.companyPhone)} | ${s(d.companyWebsite)}
       </div>
     </div>
     <div class="doc-titlebar">
@@ -982,6 +989,7 @@ function renderForm() {
         ${fld("公司名稱(英文)", "companyNameEn")}
       </div>
       ${fld("地址", "companyAddress")}
+      ${fld("註冊證號(交觀甲/品保,留空不顯示)", "companyLicense")}
       <div class="row2">
         ${fld("電話", "companyPhone")}
         ${fld("網站", "companyWebsite")}
