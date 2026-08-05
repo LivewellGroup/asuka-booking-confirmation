@@ -85,7 +85,7 @@
     cursor: pointer; color: var(--muted); font-family: inherit; letter-spacing: 2px;
   }
   .statusToggle button.on-paid { background: var(--green); color: #fff; }
-  .statusToggle button.on-unpaid { background: var(--gold-dk); color: #fff; }
+  .statusToggle button.on-unpaid { background: #B85042; color: #fff; }
   /* ── 右側預覽 ── */
   #previewPanel { flex: 1; overflow: auto; padding: 24px; display: flex; justify-content: center; }
   #frameBox { transform-origin: top center; }
@@ -304,6 +304,7 @@ function docCss() {
       --cream: #F4F0E7; --paper: #FFFFFF; --ink: #151917; --muted: #6D6A62;
       --line: #D8D1C2; --seaglass: #B8D3CE; --stone: #CEC6B8;
       --gold: #C8A35C; --gold-dk: #8F6E33; --gold-bg: #F5EDDD;
+      --danger: #8B3A2D;
       --serif-en: 'Cormorant Garamond', 'Noto Serif TC', serif;
       --serif-zh: 'Noto Serif TC', serif;
       --sans: 'Inter', 'Noto Sans TC', 'Segoe UI', 'Microsoft JhengHei', sans-serif;
@@ -345,9 +346,9 @@ function docCss() {
     .status-strip.unpaid { background: var(--gold-bg); border-left: 2mm solid var(--gold); }
     .status-strip .st { font-family: var(--font-serif); font-size: 12pt; font-weight: 700; letter-spacing: 2.5px; }
     .status-strip.paid .st { color: var(--green-dk); }
-    .status-strip.unpaid .st { color: var(--gold-dk); }
+    .status-strip.unpaid .st { color: var(--danger); }
     .status-strip .due { font-size: 10pt; color: var(--ink); letter-spacing: .5px; }
-    .status-strip .due strong { font-family: var(--serif-zh); font-size: 12.5pt; color: var(--gold-dk); font-weight: 700; margin-left: 2mm; }
+    .status-strip .due strong { font-family: var(--serif-zh); font-size: 12.5pt; color: var(--danger); font-weight: 700; margin-left: 2mm; }
     /* 航程區(左:航程名稱/右:日期三列) */
     .voy2 { display: flex; justify-content: space-between; align-items: center; gap: 8mm; margin-bottom: 3.5mm; }
     .voy-route { font-size: 14pt; color: var(--ink); font-weight: 700; line-height: 1.45; flex: 1; }
@@ -378,8 +379,8 @@ function docCss() {
     .amt-totals .trow.total { padding: 2.2mm 2.5mm; }
     .amt-totals .trow.total .k { color: var(--green-dk); font-weight: 700; }
     .amt-totals .trow.total .v { color: var(--green-dk); font-weight: 700; }
-    .amt-totals .trow.balance .k { color: var(--gold-dk); font-weight: 700; }
-    .amt-totals .trow.balance .v { color: var(--gold-dk); font-weight: 700; }
+    .amt-totals .trow.balance .k { color: var(--danger); font-weight: 700; }
+    .amt-totals .trow.balance .v { color: var(--danger); font-weight: 700; }
     .amt-note { font-size: 9.5pt; color: var(--muted); line-height: 1.7; margin-top: 2mm; text-align: right; }
     /* 代收轉付填寫列 */
     .rcpt { font-size: 10.5pt; line-height: 1.75; }
@@ -389,7 +390,7 @@ function docCss() {
     /* 付款頁 */
     .due-banner { background: var(--gold-bg); border-left: 2mm solid var(--gold); padding: 4mm 6mm; margin-bottom: 6mm; display: flex; justify-content: space-between; align-items: center; }
     .due-banner .k { font-size: 9pt; color: var(--gold); letter-spacing: 2.5px; font-weight: 700; text-transform: uppercase; }
-    .due-banner .v { font-family: var(--serif-zh); font-size: 15pt; color: var(--gold-dk); font-weight: 700; margin-top: 1.5mm; }
+    .due-banner .v { font-family: var(--serif-zh); font-size: 15pt; color: var(--danger); font-weight: 700; margin-top: 1.5mm; }
     .bank-block { margin-bottom: 7mm; }
     .bank-row { display: flex; border-bottom: 0.5px solid var(--line); }
     .bank-row:nth-child(even) { background: var(--cream); }
@@ -595,7 +596,7 @@ function renderDocument(d, forceSplitAmount = false) {
       return `
       <div class="bank-block">
         <div class="mini-head"><span class="t">${s(b.title, "匯款帳戶")}</span><span class="rule"></span></div>
-        ${bal !== null ? `<div class="bank-row"><span class="k">AMOUNT 匯款金額</span><span class="v" style="font-family:var(--font-serif);font-weight:700;color:var(--gold-dk);">${fmtMoney(cur, bal)}</span></div>` : ""}
+        ${bal !== null ? `<div class="bank-row"><span class="k">AMOUNT 匯款金額</span><span class="v" style="font-family:var(--font-serif);font-weight:700;color:var(--danger);">${fmtMoney(cur, bal)}</span></div>` : ""}
         <div class="bank-row"><span class="k">BANK 銀行名稱</span><span class="v">${s(b.bankName, "—")}</span></div>
         <div class="bank-row"><span class="k">BRANCH 分行名稱</span><span class="v">${s(b.branchName, "—")}</span></div>
         <div class="bank-row"><span class="k">ACCOUNT NAME 戶名</span><span class="v">${s(b.accountName, "—")}</span></div>
