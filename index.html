@@ -14,6 +14,7 @@
     --cream: #F4F0E7; --ink: #151917; --muted: #6D6A62;
     --line: #D8D1C2; --gold: #C8A35C; --gold-dk: #8F6E33; --gold-bg: #F5EDDD;
     --seaglass: #B8D3CE; --stone: #CEC6B8;
+    --red: #8B3A2D;              /* 重點資訊磚紅（與文件 --danger 同值） */
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -21,10 +22,10 @@
     background: var(--cream); color: var(--ink); height: 100vh; display: flex; flex-direction: column; overflow: hidden;
   }
   header.topbar {
-    background: var(--green); color: #F4F0E7; padding: 10px 20px;
+    background: var(--green); color: #F4F0E7; padding: 8px 20px;
     display: flex; align-items: center; gap: 16px; flex-shrink: 0;
   }
-  .topbar .brand-logo { height: 24px; display: block; }
+  .topbar .brand-logo { height: 48px; display: block; } /* 橫式 Logo 最小寬度 160px（品牌規範） */
   .topbar h1 { font-size: 15px; font-weight: 500; letter-spacing: 1px; }
   .topbar .sub { font-size: 10.5px; opacity: .7; letter-spacing: 2.5px; text-transform: uppercase; }
   .topbar .spacer { flex: 1; }
@@ -42,10 +43,10 @@
     width: 430px; flex-shrink: 0; overflow-y: auto; background: #fff;
     border-right: 1px solid var(--line); padding: 14px 16px 60px;
   }
-  details.sec { border: 1px solid var(--line); border-radius: 4px; margin-bottom: 10px; background: #fff; }
+  details.sec { border: 1px solid var(--line); border-radius: 0; margin-bottom: 10px; background: #fff; }
   details.sec > summary {
     cursor: pointer; padding: 10px 12px; font-size: 14px; font-weight: 600; color: var(--green-dk);
-    background: var(--green-lt); border-radius: 3px; list-style: none; display: flex; align-items: center; gap: 8px;
+    background: var(--green-lt); border-radius: 0; list-style: none; display: flex; align-items: center; gap: 8px;
     user-select: none;
   }
   details.sec > summary::before { content: "▸"; font-size: 11px; transition: transform .15s; }
@@ -54,11 +55,11 @@
   .field { margin-bottom: 10px; }
   .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 3px; letter-spacing: .5px; }
   .field input[type=text], .field input[type=date], .field textarea, .field select {
-    width: 100%; padding: 7px 9px; font-size: 13.5px; border: 1px solid var(--line); border-radius: 3px;
+    width: 100%; padding: 7px 9px; font-size: 13.5px; border: 1px solid var(--line); border-radius: 0;
     font-family: inherit; color: var(--ink); background: #fff;
   }
   .field textarea { resize: vertical; min-height: 56px; line-height: 1.6; }
-  .field input:focus, .field textarea:focus, .field select:focus { outline: 2px solid var(--green-lt); border-color: var(--green); }
+  .field input:focus, .field textarea:focus, .field select:focus { outline: 2px solid var(--seaglass); border-color: var(--green); }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
   .checkline { display: flex; align-items: center; gap: 7px; font-size: 13.5px; padding: 4px 0; cursor: pointer; }
@@ -66,32 +67,31 @@
   .hint { font-size: 11.5px; color: var(--muted); line-height: 1.5; margin-top: 4px; }
   /* 動態列表 */
   .list-item {
-    border: 1px solid var(--line); border-left: 3px solid var(--green); border-radius: 3px;
+    border: 1px solid var(--line); border-left: 3px solid var(--green);
     padding: 9px 10px 4px; margin-bottom: 8px; position: relative; background: #FCFBF8;
   }
   .list-item .del {
-    position: absolute; top: 6px; right: 6px; border: none; background: none; color: #B85042;
+    position: absolute; top: 6px; right: 6px; border: none; background: none; color: var(--red);
     font-size: 15px; cursor: pointer; line-height: 1; padding: 3px 5px;
   }
-  .list-item .del:hover { background: #F7E8E5; border-radius: 3px; }
+  .list-item .del:hover { background: #F7E8E5; }
   button.add {
     width: 100%; padding: 7px; border: 1px dashed var(--green); background: none; color: var(--green-dk);
-    font-size: 13px; cursor: pointer; border-radius: 3px; font-family: inherit;
+    font-size: 13px; cursor: pointer; border-radius: 0; font-family: inherit;
   }
   button.add:hover { background: var(--green-lt); }
-  .statusToggle { display: flex; gap: 0; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+  .statusToggle { display: flex; gap: 0; border: 1px solid var(--line); border-radius: 0; overflow: hidden; }
   .statusToggle button {
     flex: 1; padding: 10px; font-size: 14px; font-weight: 700; border: none; background: #fff;
     cursor: pointer; color: var(--muted); font-family: inherit; letter-spacing: 2px;
   }
   .statusToggle button.on-paid { background: var(--green); color: #fff; }
-  .statusToggle button.on-unpaid { background: #B85042; color: #fff; }
+  .statusToggle button.on-unpaid { background: var(--red); color: #fff; }
   /* ── 右側預覽 ── */
-  #previewPanel { flex: 1; overflow: auto; padding: 24px; display: flex; justify-content: center; }
+  #previewPanel { flex: 1; overflow: auto; padding: 24px; display: flex; justify-content: center; background: #E3DDD0; }
   #frameBox { transform-origin: top center; }
   #previewFrame {
-    width: 210mm; border: none; background: #fff;
-    box-shadow: 0 4px 24px rgba(0,0,0,.18);
+    width: 210mm; border: none; background: transparent;
   }
 </style>
 </head>
@@ -201,7 +201,7 @@ const DEFAULT_DATA = {
   companyAddress: "106485 台北市大安區敦化南路一段 76 號 2 樓-2（潤泰金融大樓）",
   companyLicense: "交觀甲 05652 號 | 品保會員北 2511 號",
   companyPhone: "02-2704 3636",
-  companyWebsite: "livewellgroup.com.tw",
+  companyEmail: "info@livewellgroup.com.tw",
 };
 
 const STORAGE_KEY = "asuka-booking-confirm-v2";
@@ -238,6 +238,7 @@ function normalizeData(d) {
     d.companyName = "艾旅國際旅行社";
     d.companyNameEn = d.companyNameEn || "LIVEWELL GROUP LTD.";
   }
+  if (!d.companyEmail) d.companyEmail = DEFAULT_DATA.companyEmail;
   return d;
 }
 function loadInitial() {
@@ -312,23 +313,26 @@ function docCss() {
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     @page { size: A4 portrait; margin: 0; }
-    body { font-family: var(--font-sans); color: var(--ink); background: var(--cream); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .page { width: 210mm; min-height: 297mm; height: 297mm; padding: 14mm; position: relative; overflow: hidden; break-after: page; background: var(--cream); }
+    body { font-family: var(--font-sans); color: var(--ink); background: var(--paper); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page { width: 210mm; min-height: 297mm; height: 297mm; padding: 14mm; position: relative; overflow: hidden; break-after: page; background: var(--paper); }
+    /* 螢幕預覽：頁與頁之間分開並加投影；列印不受影響 */
+    @media screen {
+      body { background: #E3DDD0; padding: 5mm 0; }
+      .page { margin: 0 auto 5mm; box-shadow: 0 2px 10px rgba(21,25,23,.16); }
+    }
     /* 頁眉/頁尾 */
     .ph { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 2.5mm; border-bottom: 0.5px solid var(--line); margin-bottom: 6mm; }
     .ph-left { font-family: var(--serif-en); font-size: 10.5pt; color: var(--green-dk); letter-spacing: 3.5px; font-weight: 500; }
     .ph-right { font-size: 8pt; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
-    .pf { position: absolute; left: 14mm; right: 14mm; bottom: 9mm; display: flex; justify-content: space-between; align-items: baseline; border-top: 0.5px solid var(--line); padding-top: 2.5mm; }
+    .pf { position: absolute; left: 14mm; right: 14mm; bottom: 9mm; display: flex; justify-content: space-between; align-items: baseline; }
     .pf-left { font-family: var(--font-sans); font-size: 9pt; color: var(--muted); white-space: nowrap; }
     .pf-num { font-size: 10pt; color: var(--green); font-family: var(--font-sans); font-weight: 600; }
     /* 區塊標題 */
-    .eyebrow { font-size: 10pt; color: var(--green); letter-spacing: 3px; font-weight: 700; text-transform: uppercase; }
-    .sec-title { font-family: var(--serif-zh); font-size: 21pt; color: var(--ink); font-weight: 700; letter-spacing: 0.5px; margin-top: 1.5mm; margin-bottom: 6mm; }
+    .sec-title { font-family: var(--serif-zh); font-size: 20pt; color: var(--ink); font-weight: 700; letter-spacing: 1px; margin-bottom: 7mm; }
     .divider { border: none; border-top: 0.5px solid var(--line); margin: 2.5mm 0; }
     .label { font-size: 9pt; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; white-space: nowrap; }
-    .mini-head { display: flex; align-items: baseline; gap: 3mm; margin-bottom: 2mm; }
-    .mini-head .t { font-size: 10.5pt; color: var(--green); letter-spacing: 2px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
-    .mini-head .rule { flex: 1; border-top: 0.5px solid var(--line); }
+    .mini-head { margin-bottom: 3mm; }
+    .mini-head .t { font-size: 10.5pt; color: var(--green-dk); letter-spacing: 2.5px; font-weight: 700; }
     /* 首頁頁首(Logo + 公司資訊) */
     .doc-head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 4mm; border-bottom: 0.5px solid var(--line); }
     .doc-logo { width: 52mm; }
@@ -342,8 +346,8 @@ function docCss() {
     .doc-meta .v { color: var(--ink); font-family: var(--font-sans); font-weight: 600; font-size: 9.5pt; }
     /* 狀態列 */
     .status-strip { display: flex; justify-content: space-between; align-items: center; margin: 4.5mm 0 6mm; padding: 3mm 5mm; }
-    .status-strip.paid { background: var(--green-lt); border-left: 2mm solid var(--green); }
-    .status-strip.unpaid { background: var(--gold-bg); border-left: 2mm solid var(--gold); }
+    .status-strip.paid { border-left: 0.6mm solid var(--green); padding-left: 4.5mm; }
+    .status-strip.unpaid { background: var(--gold-bg); border-left: 0.6mm solid var(--gold); }
     .status-strip .st { font-family: var(--font-serif); font-size: 12pt; font-weight: 700; letter-spacing: 2.5px; }
     .status-strip.paid .st { color: var(--green-dk); }
     .status-strip.unpaid .st { color: var(--danger); }
@@ -367,12 +371,12 @@ function docCss() {
     .amt-table th { border-bottom: 1px solid var(--green-dk); color: var(--green); font-size: 8.5pt; letter-spacing: 2px; font-weight: 700; text-transform: uppercase; padding: 1.8mm 2.5mm; text-align: left; }
     .amt-table th.r, .amt-table td.r { text-align: right; }
     .amt-table th.c, .amt-table td.c { text-align: center; }
-    .amt-table td { font-size: 10.5pt; padding: 2.2mm 2.5mm; background: rgba(255,255,255,0.6); }
+    .amt-table td { font-size: 10.5pt; padding: 2.2mm 2.5mm; }
     .amt-table tbody tr:last-child td { border-bottom: 1px solid var(--green-dk); }
     .amt-table td.money { font-weight: 700; white-space: nowrap; }
     .amt-table tr.received td { color: var(--green-dk); }
     .amt-table tr.received td.money::before { content: "− "; }
-    .amt-totals { width: 100%; background: rgba(255,255,255,0.6); border-bottom: 0.5px solid var(--line); }
+    .amt-totals { width: 100%; border-bottom: 0.5px solid var(--line); }
     .amt-totals .trow { display: flex; justify-content: flex-end; align-items: baseline; gap: 8mm; padding: 1.8mm 2.5mm; }
     .amt-totals .trow .k { font-size: 10.5pt; color: var(--ink); }
     .amt-totals .trow .v { font-family: var(--font-sans); font-size: 11.5pt; color: var(--ink); font-weight: 700; }
@@ -388,19 +392,15 @@ function docCss() {
     .rcpt-line .ln { border-bottom: 1px solid #666; height: 5.5mm; }
     .rcpt-line .ln.grow { flex: 1; }
     /* 付款頁 */
-    .due-banner { background: var(--gold-bg); border-left: 2mm solid var(--gold); padding: 4mm 6mm; margin-bottom: 6mm; display: flex; justify-content: space-between; align-items: center; }
+    .due-banner { background: var(--gold-bg); border-left: 0.6mm solid var(--gold); padding: 4mm 6mm; margin-bottom: 6mm; display: flex; justify-content: space-between; align-items: center; }
     .due-banner .k { font-size: 9pt; color: var(--gold); letter-spacing: 2.5px; font-weight: 700; text-transform: uppercase; }
     .due-banner .v { font-family: var(--serif-zh); font-size: 15pt; color: var(--danger); font-weight: 700; margin-top: 1.5mm; }
     .bank-block { margin-bottom: 7mm; }
     .bank-row { display: flex; border-bottom: 0.5px solid var(--line); }
-    .bank-row:nth-child(even) { background: var(--cream); }
-    .bank-row:nth-child(odd) { background: var(--paper); }
     .bank-row .k { width: 58mm; flex-shrink: 0; padding: 2.8mm 4mm; font-size: 9.5pt; color: var(--muted); letter-spacing: 1px; }
     .bank-row .v { flex: 1; padding: 2.8mm 4mm; font-size: 10.5pt; color: var(--ink); }
-    .gold-warning { background: var(--gold-bg); border: 1px solid var(--gold); display: flex; align-items: center; gap: 5mm; padding: 4mm 5.5mm; margin-top: 5mm; }
-    .warn-tri { width: 0; height: 0; flex-shrink: 0; border-left: 4mm solid transparent; border-right: 4mm solid transparent; border-bottom: 7mm solid var(--gold-dk); position: relative; }
-    .warn-tri::after { content: "!"; position: absolute; left: -1.2mm; top: 1.6mm; color: #fff; font-size: 9pt; font-weight: 700; width: 2.4mm; text-align: center; }
-    .gold-warning .msg { font-size: 10.5pt; color: var(--green-dk); line-height: 1.6; }
+    .gold-warning { background: var(--gold-bg); border-left: 0.6mm solid var(--gold); padding: 4mm 5.5mm; margin-top: 5mm; }
+    .gold-warning .msg { font-size: 10.5pt; color: var(--green-dk); line-height: 1.7; }
     /* 取消規定(彩條卡片) */
     .pen-card { display: flex; align-items: stretch; background: var(--paper); border: 0.5px solid var(--line); margin-bottom: 2.5mm; height: 25mm; overflow: hidden; }
     .pen-stripe { width: 3.5mm; flex-shrink: 0; }
@@ -443,8 +443,8 @@ function renderDocument(d, forceSplitAmount = false) {
       </div>
     </section>`;
   };
+  /* 標題只留中文（2026-08-11 視覺定稿）：不再輸出英文眉標 */
   const sectionTitle = (eyebrow, title) => `
-    <div class="eyebrow">${eyebrow}</div>
     <h2 class="sec-title">${title}</h2>`;
 
   const pages = [];
@@ -482,16 +482,16 @@ function renderDocument(d, forceSplitAmount = false) {
   const kvRow = (label, valueHtml) => `<div class="kv-row"><span class="label">${label}</span>${valueHtml}</div>`;
 
   const amountSection = `
-    <div class="mini-head"><span class="t">AMOUNT · 金額</span><span class="rule"></span></div>
+    <div class="mini-head"><span class="t">金額</span></div>
     <table class="amt-table">
-      <thead><tr><th>項目 DESCRIPTION</th><th class="c" style="width:22mm;">幣別</th><th class="r" style="width:40mm;">金額 AMOUNT</th></tr></thead>
+      <thead><tr><th>項目</th><th class="c" style="width:22mm;">幣別</th><th class="r" style="width:40mm;">金額</th></tr></thead>
       <tbody>${amtRows || `<tr><td colspan="3" style="color:var(--muted);">尚未填寫</td></tr>`}</tbody>
     </table>
     ${totalBlocks}
     ${d.amountNote ? `<div class="amt-note">${nl2br(d.amountNote)}</div>` : ""}
-    ${d.notes ? `<hr class="divider"><div class="mini-head"><span class="t">REMARKS · 備註</span><span class="rule"></span></div><div style="font-size:10.5pt;line-height:1.8;">${nl2br(d.notes)}</div>` : ""}
+    ${d.notes ? `<hr class="divider"><div class="mini-head"><span class="t">備註</span></div><div style="font-size:10.5pt;line-height:1.8;">${nl2br(d.notes)}</div>` : ""}
     ${unpaid ? `<hr class="divider">
-    <div class="mini-head"><span class="t">RECEIPT · 代收轉付</span><span class="rule"></span></div>
+    <div class="mini-head"><span class="t">代收轉付</span></div>
     <div class="rcpt">
       是否需要開立代收轉付收據：<span style="font-size:12pt;">□</span> 否　<span style="font-size:12pt;">□</span> 是（勾選「是」請填寫以下資訊）
       <div class="rcpt-line"><span>抬頭：</span><span class="ln grow"></span><span style="margin-left:7mm;">統編：</span><span class="ln" style="width:42mm;"></span></div>
@@ -527,12 +527,11 @@ function renderDocument(d, forceSplitAmount = false) {
         <div class="nm">${s(d.companyName, "艾旅國際旅行社")}</div>
         ${s(d.companyAddress)}<br>
         ${d.companyLicense ? `${esc(d.companyLicense)}<br>` : ""}
-        Tel: ${s(d.companyPhone)} | ${s(d.companyWebsite)}
+        Tel ${s(d.companyPhone)} · ${s(d.companyEmail)}
       </div>
     </div>
     <div class="doc-titlebar">
       <div>
-        <div class="eyebrow">Booking Confirmation · Invoice</div>
         <div class="doc-title-zh">訂位確認書</div>
       </div>
       <div class="doc-meta">
@@ -541,7 +540,7 @@ function renderDocument(d, forceSplitAmount = false) {
     </div>
     ${statusStrip}
 
-    <div class="mini-head"><span class="t">VOYAGE · 航程資訊</span><span class="rule"></span></div>
+    <div class="mini-head"><span class="t">航程資訊</span></div>
     <div class="voy2">
       <div class="voy-route">${[s(d.shipName), s(d.routeName)].filter(Boolean).join(" ・ ") || "—"}</div>
       <div class="voy-meta">
@@ -551,14 +550,14 @@ function renderDocument(d, forceSplitAmount = false) {
       </div>
     </div>
 
-    <div class="mini-head"><span class="t">SUITE · 房型</span><span class="rule"></span></div>
+    <div class="mini-head"><span class="t">房型</span></div>
     <div class="kv-list">
       ${kvRow("Category 房型", `<span class="v">${s(d.cabinName, "—")}</span>${d.cabinNameEn ? `<span class="sub">${esc(d.cabinNameEn)}</span>` : ""}`)}
       ${kvRow("Cabin No. 艙房號", `<span class="v">${s(d.cabinNo, "待郵輪公司分配")}</span>`)}
       ${kvRow("Occupancy 入住", `<span class="v">${s(d.occupancy, "—")}</span>`)}
     </div>
 
-    <div class="mini-head"><span class="t">GUESTS · 訂位人</span><span class="rule"></span></div>
+    <div class="mini-head"><span class="t">訂位人</span></div>
     <div class="kv-list">
       ${(d.guests || []).map((g, i) =>
         kvRow(`Guest ${pad2(i + 1)} 貴賓姓名`, `<span class="v">${s(g.nameZh, "—")}</span><span class="en">${s(g.nameEn)}</span>`)).join("") || kvRow("Guest 01 貴賓姓名", `<span class="v" style="color:var(--muted);">尚未填寫</span>`)}
@@ -595,7 +594,7 @@ function renderDocument(d, forceSplitAmount = false) {
       const bal = manual > 0 ? manual : (totals[cur] && totals[cur].balance > 0 ? totals[cur].balance : null);
       return `
       <div class="bank-block">
-        <div class="mini-head"><span class="t">${s(b.title, "匯款帳戶")}</span><span class="rule"></span></div>
+        <div class="mini-head"><span class="t">${s(b.title, "匯款帳戶")}</span></div>
         ${bal !== null ? `<div class="bank-row"><span class="k">AMOUNT 匯款金額</span><span class="v" style="font-family:var(--font-sans);font-weight:700;color:var(--danger);">${fmtMoney(cur, bal)}</span></div>` : ""}
         <div class="bank-row"><span class="k">BANK 銀行名稱</span><span class="v">${s(b.bankName, "—")}</span></div>
         <div class="bank-row"><span class="k">BRANCH 分行名稱</span><span class="v">${s(b.branchName, "—")}</span></div>
@@ -613,7 +612,6 @@ function renderDocument(d, forceSplitAmount = false) {
       ${d.showJpyBank ? bankBlock(d.bankJpy, "JPY") : ""}
       ${d.showTwdBank ? bankBlock(d.bankTwd, "NTD") : ""}
       <div class="gold-warning">
-        <div class="warn-tri"></div>
         <div class="msg">匯款完成後，請將匯款憑證回傳予您的旅遊顧問，以利款項核對及訂位確認。</div>
       </div>
     `));
@@ -638,7 +636,7 @@ function renderDocument(d, forceSplitAmount = false) {
       ${sectionTitle("Credit Card Authorization", `船費信用卡授權單（${cur === "JPY" ? "日幣" : "台幣"}）`)}
       <div style="font-size:11pt;color:var(--muted);margin:-1mm 0 6mm;">ASUKA Cruise · Cruise Fare Payment — Credit Card Authorization Form</div>
       <table style="width:100%;border-collapse:collapse;font-size:11.5pt;margin-bottom:5mm;">
-        <tr style="background:var(--cream);">
+        <tr style="background:var(--gold-bg);">
           <th style="${cell}text-align:left;width:34%;">航程 Voyage</th>
           <th style="${cell}text-align:left;width:28%;">客艙 Suite</th>
           <th style="${cell}text-align:left;">訂位人 Guest</th>
@@ -649,9 +647,9 @@ function renderDocument(d, forceSplitAmount = false) {
           <td style="${cell}line-height:1.8;">${(d.guests || []).map(g => esc(g.nameZh || g.nameEn)).filter(Boolean).join("<br>") || "—"}</td>
         </tr>
       </table>
-      <div class="mini-head"><span class="t">AMOUNT · 金額 (${cur})</span><span class="rule"></span></div>
+      <div class="mini-head"><span class="t">金額 (${cur})</span></div>
       <div style="font-size:12.5pt;line-height:1.9;margin:3mm 0 5mm;">${noteOverride ? nl2br(noteOverride) : defaultAmountNote}</div>
-      <div class="mini-head"><span class="t">CREDIT CARD · 信用卡資料</span><span class="rule"></span></div>
+      <div class="mini-head"><span class="t">信用卡資料</span></div>
       <div style="font-size:11pt;margin:3mm 0 4mm;">
         <div style="margin-bottom:5mm;font-size:11.5pt;">☐ VISA　　　☐ MASTER　　　｜　　　認證碼 CID ＿＿＿＿＿＿＿＿＿＿（需提供）</div>
         ${ccField("Credit Card Number 卡號")}
@@ -665,7 +663,7 @@ function renderDocument(d, forceSplitAmount = false) {
           <div style="flex:1;">${ccField("Date 填寫日期")}</div>
         </div>
       </div>
-      <div class="mini-head"><span class="t">NOTES · 注意事項</span><span class="rule"></span></div>
+      <div class="mini-head"><span class="t">注意事項</span></div>
       <div style="font-size:10.5pt;color:var(--muted);line-height:1.8;margin:4mm 0;">請於付款到期日（${fmtDate(d.paymentDueDate)}）前完成費用繳付，以避免跨國作業突發狀況造成付款失敗。填寫完成後，請將本刷卡單回傳予您的旅遊顧問。</div>
     `);
   };
@@ -684,7 +682,7 @@ function renderDocument(d, forceSplitAmount = false) {
     pages.push(innerPage(`
       ${sectionTitle("Pre-Cruise Schedule", "出發前重要日程")}
       <div style="font-size:11pt;color:var(--muted);margin:-1mm 0 6mm;">岸上觀光與餐廳預選開放日程${d.departureDate ? `（以出發日 ${fmtDate(d.departureDate)} 為基準）` : ""}</div>
-      <div class="mini-head"><span class="t">PRE-SELECTION SCHEDULE · 預選開放日程</span><span class="rule"></span></div>
+      <div class="mini-head"><span class="t">預選開放日程</span></div>
       ${(d.scheduleItems || []).map((it, i) => {
         const color = schColors[Math.min(i, schColors.length - 1)];
         const days = Number(it.daysBefore) || 0;
@@ -719,7 +717,7 @@ function renderDocument(d, forceSplitAmount = false) {
   ];
   pages.push(innerPage(`
     ${sectionTitle("Cancellation Policy", "郵輪取消規定")}
-    <div class="mini-head"><span class="t">PENALTY SCHEDULE · 取消費用</span><span class="rule"></span></div>
+    <div class="mini-head"><span class="t">取消費用</span></div>
     ${(d.penaltySchedule || []).map((p, i) => {
       const color = penaltyColors[Math.min(i, penaltyColors.length - 1)];
       return `
@@ -739,7 +737,7 @@ function renderDocument(d, forceSplitAmount = false) {
     }).join("")}
     ${(d.penaltyNoticeEn || d.penaltyNoticeZh) ? `
     <div style="margin-top:7mm;">
-      <div class="mini-head"><span class="t">IMPORTANT NOTICES · 重要提醒</span><span class="rule"></span></div>
+      <div class="mini-head"><span class="t">重要提醒</span></div>
       ${d.penaltyNoticeZh ? `<div class="pen-notice-zh">${nl2br(d.penaltyNoticeZh)}</div>` : ""}
       ${d.penaltyNoticeEn ? `<div class="pen-notice-en">${nl2br(d.penaltyNoticeEn)}</div>` : ""}
     </div>` : ""}
@@ -993,7 +991,7 @@ function renderForm() {
       ${fld("註冊證號(交觀甲/品保,留空不顯示)", "companyLicense")}
       <div class="row2">
         ${fld("電話", "companyPhone")}
-        ${fld("網站", "companyWebsite")}
+        ${fld("Email", "companyEmail")}
       </div>
     </div>
   </details>`;
@@ -1073,8 +1071,10 @@ document.getElementById("btnPdf").onclick = () => {
   const w = window.open("", "_blank");
   if (!w) { alert("請允許彈出視窗以下載 PDF"); return; }
   w.document.open(); w.document.write(renderDocument(data)); w.document.close();
-  // 等字型與版面載入後叫出列印(另存 PDF);分頁由文件內嵌腳本實測處理,列印前亦會再檢查一次
-  setTimeout(() => { try { w.focus(); w.print(); } catch (e) {} }, 900);
+  // 等 Google Fonts 載入完成再叫出列印(另存 PDF);最多等 2.5 秒後改用備援字型;分頁由文件內嵌腳本實測處理
+  const fontsReady = (w.document.fonts && w.document.fonts.ready) ? w.document.fonts.ready : Promise.resolve();
+  Promise.race([fontsReady, new Promise(res => setTimeout(res, 2500))])
+    .then(() => setTimeout(() => { try { w.focus(); w.print(); } catch (e) {} }, 150));
 };
 document.getElementById("btnSave").onclick = () => {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
