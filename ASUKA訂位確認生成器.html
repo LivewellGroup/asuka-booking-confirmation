@@ -324,15 +324,17 @@ function docCss() {
     .ph { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 2.5mm; border-bottom: 0.5px solid var(--line); margin-bottom: 6mm; }
     .ph-left { font-family: var(--serif-en); font-size: 10.5pt; color: var(--green-dk); letter-spacing: 3.5px; font-weight: 500; }
     .ph-right { font-size: 8pt; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
-    .pf { position: absolute; left: 14mm; right: 14mm; bottom: 9mm; display: flex; justify-content: space-between; align-items: baseline; }
+    .pf { position: absolute; left: 14mm; right: 14mm; bottom: 9mm; display: flex; justify-content: space-between; align-items: baseline; border-top: 0.5px solid var(--line); padding-top: 2.5mm; }
     .pf-left { font-family: var(--font-sans); font-size: 9pt; color: var(--muted); white-space: nowrap; }
     .pf-num { font-size: 10pt; color: var(--green); font-family: var(--font-sans); font-weight: 600; }
     /* 區塊標題 */
     .sec-title { font-family: var(--serif-zh); font-size: 20pt; color: var(--ink); font-weight: 700; letter-spacing: 1px; margin-bottom: 7mm; }
     .divider { border: none; border-top: 0.5px solid var(--line); margin: 2.5mm 0; }
     .label { font-size: 9pt; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; white-space: nowrap; }
-    .mini-head { margin-bottom: 3mm; }
-    .mini-head .t { font-size: 10.5pt; color: var(--green-dk); letter-spacing: 2.5px; font-weight: 700; }
+    /* 小標＋輔助髮絲線（標題右側延伸至版心右緣，界定區塊起點） */
+    .mini-head { display: flex; align-items: baseline; gap: 3mm; margin-bottom: 3mm; }
+    .mini-head .t { font-size: 10.5pt; color: var(--green-dk); letter-spacing: 2.5px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+    .mini-head::after { content: ""; flex: 1; border-top: 0.5px solid var(--line); }
     /* 首頁頁首(Logo + 公司資訊) */
     .doc-head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 4mm; border-bottom: 0.5px solid var(--line); }
     .doc-logo { width: 52mm; }
