@@ -198,7 +198,7 @@ const DEFAULT_DATA = {
   // 公司資訊
   companyName: "艾旅國際旅行社",
   companyNameEn: "LIVEWELL GROUP LTD.",
-  companyAddress: "106485 台北市大安區敦化南路一段 76 號 2 樓-2（潤泰金融大樓）",
+  companyAddress: "106485 台北市大安區敦化南路一段 76 號 2 樓-2",
   companyLicense: "交觀甲 05652 號 | 品保會員北 2511 號",
   companyPhone: "02-2704 3636",
   companyEmail: "info@livewellgroup.com.tw",
@@ -231,7 +231,8 @@ function normalizeData(d) {
   if (flatTxt(d.penaltyNoticeZh) === flatTxt(DEFAULT_DATA.penaltyNoticeZh)) d.penaltyNoticeZh = DEFAULT_DATA.penaltyNoticeZh;
   // 舊版單行公司名稱預設值 → 換成新的中英兩行預設
   // 舊版地址預設值 → 2026-08-05 更新的完整地址(僅在使用者未自行修改時遷移)
-  if (d.companyAddress === "106485 台北市大安區敦化南路二段 76 號 2 樓之 2") {
+  if (d.companyAddress === "106485 台北市大安區敦化南路二段 76 號 2 樓之 2"
+    || d.companyAddress === "106485 台北市大安區敦化南路一段 76 號 2 樓-2（潤泰金融大樓）") {
     d.companyAddress = DEFAULT_DATA.companyAddress;
   }
   if (d.companyName === "艾旅 LIVEWELL") {
