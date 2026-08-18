@@ -199,7 +199,7 @@ const DEFAULT_DATA = {
   companyName: "艾旅國際旅行社",
   companyNameEn: "LIVEWELL GROUP LTD.",
   companyAddress: "106485 台北市大安區敦化南路一段 76 號 2 樓-2",
-  companyLicense: "交觀甲 05652 號 | 品保會員北 2511 號",
+  companyLicense: "交觀甲 837500 號 | 品保會員北 2511 號",
   companyPhone: "02-2704 3636",
   companyEmail: "info@livewellgroup.com.tw",
 };
@@ -240,6 +240,7 @@ function normalizeData(d) {
     d.companyNameEn = d.companyNameEn || "LIVEWELL GROUP LTD.";
   }
   if (!d.companyEmail) d.companyEmail = DEFAULT_DATA.companyEmail;
+  if (!d.companyLicense || /05652/.test(d.companyLicense)) d.companyLicense = DEFAULT_DATA.companyLicense;
   return d;
 }
 function loadInitial() {
