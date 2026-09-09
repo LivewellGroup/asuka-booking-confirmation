@@ -177,7 +177,7 @@ const DEFAULT_DATA = {
   ccAuthNoteNtd: "",
   // 取消規定(中英對照表)
   penaltySchedule: [
-    { periodEn: "Until 100 Days prior to departure", periodZh: "出發前 100 天（含）以上", feeEn: "FIXED RATE JPY¥5,000", feeZh: "每位收取固定取消費用：日幣 5,000 元" },
+    { periodEn: "Until 100 Days prior to departure", periodZh: "出發前 100 天（含）以上", feeEn: "FIXED RATE NT$5,000", feeZh: "每位收取固定取消費用：台幣 5,000 元" },
     { periodEn: "99 - 76 Days prior to departure", periodZh: "出發前 99〜76 天", feeEn: "25% of Full Fare", feeZh: "收取全額船費之 25%" },
     { periodEn: "75 - 51 Days prior to departure", periodZh: "出發前 75〜51 天", feeEn: "50% of Full Fare", feeZh: "收取全額船費之 50%" },
     { periodEn: "50 - 31 Days prior to departure", periodZh: "出發前 50〜31 天", feeEn: "75% of Full Fare", feeZh: "收取全額船費之 75%" },
@@ -213,6 +213,12 @@ function normalizeData(d) {
     d.penaltySchedule = d.penaltySchedule.map(p => p && "period" in p
       ? { periodEn: "", periodZh: p.period || "", feeEn: p.penaltyRate || "", feeZh: p.description || "" }
       : p);
+    // 固定取消費用幣別由日幣改台幣(2026-09-09);僅在使用者未自行修改過舊預設值時遷移
+    for (const p of d.penaltySchedule) {
+      if (!p) continue;
+      if (p.feeEn === "FIXED RATE JPY¥5,000") p.feeEn = "FIXED RATE NT$5,000";
+      if (p.feeZh === "每位收取固定取消費用：日幣 5,000 元") p.feeZh = "每位收取固定取消費用：台幣 5,000 元";
+    }
   }
   // 文件會自動在航程名稱前加船名;若舊資料的航程名稱已手動含船名,去除重複
   if (d.shipName && d.routeName && d.routeName.startsWith(d.shipName)) {
